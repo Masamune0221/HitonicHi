@@ -4,15 +4,15 @@ export const defaultHeaders = {
 };
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResponse {
+  status: number;
   user: {
     id: number;
     name: string;
-    email: string;
   };
   message?: string;
 }

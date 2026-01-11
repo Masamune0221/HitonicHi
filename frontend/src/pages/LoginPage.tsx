@@ -15,7 +15,7 @@ export default function Login(){
     // フォーム送信時の処理
     const onSubmit = (data: LoginFormData) => {
       try {
-        authApi.login(data.username, data.password)
+        authApi.login(data.email, data.password)
           .then(() => {
             toast.success("ログイン成功:");
           })
@@ -34,12 +34,12 @@ export default function Login(){
         {/* ユーザー名 */}
         <div>
           <Input
-            placeholder="ユーザー名"
+            placeholder="メールアドレス"
             className="border-2 h-12 border-gray-600/40"
-            {...register("username")}
+            {...register("email")}
           />
-          {errors.username && (
-            <p className="text-xs text-red-500 mt-1">{errors.username.message}</p>
+          {errors.email && (
+            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
           )}
         </div>
 

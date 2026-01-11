@@ -6,7 +6,16 @@ import {
 import { type ErrorResponse } from "../types/error";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+/**
+ * CSRF トークンを取得
+ */
+async function getCsrfToken() {
+  await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+    credentials: "include",
+  });
+}
 
 /**
  * apifetch
@@ -40,8 +49,11 @@ export const authApi = {
   getCurrentUser: () => apifetch("/user", createApiConfig()),
 
   // ログイン
-  login: async (username: string, password: string): Promise<LoginResponse> => {
-    const body: LoginRequest = { username, password };
+  login: async (email: string, password: string): Promise<LoginResponse> => {
+    const body: LoginRequest = { email, password };
+    // CSRFトークンを取得
+    await getCsrfToken();
+
     return apifetch(
       "/login",
       createApiConfig({

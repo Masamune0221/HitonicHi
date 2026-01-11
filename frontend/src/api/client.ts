@@ -40,8 +40,8 @@ export const authApi = {
   getCurrentUser: () => apifetch("/user", createApiConfig()),
 
   // ログイン
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    const body: LoginRequest = { email, password };
+  login: async (username: string, password: string): Promise<LoginResponse> => {
+    const body: LoginRequest = { username, password };
     return apifetch(
       "/login",
       createApiConfig({

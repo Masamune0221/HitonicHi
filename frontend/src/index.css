@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* フォント定義 */
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/ZenKakuGothicNew-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/ZenKakuGothicNew-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/ZenKakuGothicNew-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* カラーテーマ定義 */
+@theme {
+  --color-hitonichi-primary: #27374d;
+  --color-hitonichi-secondary: #526d82;
+  --color-hitonichi-border: #9db2bf;
+  --color-hitonichi-background: #dde6ed;
+}
+
+:root {
+  font-family: "Zen Kaku Gothic New", system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background-color: #dde6ed;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}

@@ -16,6 +16,16 @@ export interface LoginResponse {
   };
   message?: string;
 }
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+export interface RegisterResponse {
+  status: number;
+  message?: string;
+}
 
 // ユーザー情報の型
 export interface User {
@@ -36,4 +46,9 @@ export const createApiConfig = (options: RequestInit = {}): RequestInit => {
       ...options.headers,
     },
   };
+};
+
+export const headers: HeadersInit = {
+  "Content-Type": "application/json",
+  Accept: "application/json",
 };

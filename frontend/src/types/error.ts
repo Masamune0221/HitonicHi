@@ -1,5 +1,5 @@
 export interface ErrorResponse {
   status: number;
   message?: string;
-  errors?: string;
+  errors?: Record<string, string>;
 }

@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import {TrophySpin} from 'react-loading-indicators'
 import {createContext, useContext, useState,type ReactNode, useEffect} from 'react';
 import { authApi } from '../api/client';
 
@@ -43,8 +44,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (isLoading){
         return(
-            <div>
-                <p>読み込み中</p>
+            <div className='w-screen h-screen flex justify-center items-center'>
+                <TrophySpin color='skyblue' size="large" text="読み込み中です。しばらくお待ちください。"/>
             </div>
         )
     };

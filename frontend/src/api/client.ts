@@ -2,6 +2,9 @@ import {
   createApiConfig,
   type LoginRequest,
   type LoginResponse,
+  type RegisterRequest,
+  type RegisterResponse,
+  headers,
 } from "../types/auth";
 import { type ErrorResponse } from "../types/error";
 
@@ -11,11 +14,26 @@ const API_BASE_URL =
 /**
  * CSRF トークンを取得
  */
-async function getCsrfToken() {
-  await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
-    credentials: "include",
-  });
-}
+const getCsrfToken = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error(`CSRF token fetch failed: ${response.status}`);
+    }
+    const cookies = document.cookie.split(";");
+    const xsrfCookie = cookies.find((cookie) =>
+      cookie.trim().startsWith("XSRF-TOKEN=")
+    );
+    if (xsrfCookie) {
+      return decodeURIComponent(xsrfCookie.split("=")[1]);
+    }
+  } catch (error) {
+    console.error("CSRF token error:", error);
+    throw error;
+  }
+};
 
 /**
  * apifetch
@@ -46,19 +64,51 @@ async function apifetch(endpoint: string, options: RequestInit = {}) {
 
 export const authApi = {
   // 認証状態を取得
-  getCurrentUser: () => apifetch("/user", createApiConfig()),
+  getCurrentUser: () => apifetch("/api/user", createApiConfig()),
 
   // ログイン
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const body: LoginRequest = { email, password };
     // CSRFトークンを取得
-    await getCsrfToken();
-
+    const csrfToken = await getCsrfToken();
+    const headersWithCsrf: HeadersInit = {
+      ...headers,
+      "X-XSRF-TOKEN": csrfToken || "",
+    };
     return apifetch(
-      "/login",
+      "/api/login",
       createApiConfig({
         method: "POST",
         body: JSON.stringify(body),
+        headers: headersWithCsrf,
+      })
+    );
+  },
+
+  // 新規登録
+  register: async (
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string
+  ): Promise<RegisterResponse> => {
+    const csrfToken = await getCsrfToken();
+    const body: RegisterRequest = {
+      name,
+      email,
+      password,
+      password_confirmation,
+    };
+    const headersWithCsrf: HeadersInit = {
+      ...headers,
+      "X-XSRF-TOKEN": csrfToken || "",
+    };
+    return apifetch(
+      "/api/register",
+      createApiConfig({
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: headersWithCsrf,
       })
     );
   },

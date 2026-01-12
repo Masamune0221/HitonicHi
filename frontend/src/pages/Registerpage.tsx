@@ -1,27 +1,34 @@
+import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 import { useForm} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type ErrorResponse } from "../types/error";
-import { loginSchema, type LoginFormData } from "@/zod/login"
+import { registerSchema, type RegisterFormData } from "@/zod/register"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { authApi } from "@/api/client"
 import { toast } from "sonner"
 
 
-export default function Login(){
 
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
+export default function Register(){
+
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
+      resolver: zodResolver(registerSchema),
     });
-
     // フォーム送信時の処理
-    const onSubmit = (data: LoginFormData) => {
+    const onSubmit = (data:RegisterFormData) => {
       try {
-        authApi.login(data.email, data.password)
+        authApi.register(data.name, data.email, data.password, data.password_confirmation)
           .then(() => {
-            toast.success("ログイン成功:");
+            toast.success("登録成功");
+            setIsLoading(true);
+            navigate("/login");
           })
-          .catch((error: ErrorResponse) => {
+          .catch((error:ErrorResponse) => {
+            setIsLoading(false);
             if (error.errors){
               const allErrors = Object.values(error.errors).flat();
               allErrors.forEach((errMsg) =>{
@@ -32,14 +39,26 @@ export default function Login(){
             }
           });
       } catch (error) {
-        toast.error("ログイン中にエラーが発生しました:" + error);
+        toast.error("登録中にエラーが発生しました:" + error);
+        setIsLoading(false);
       }
     };
-
 
     return(
   <form onSubmit={handleSubmit(onSubmit)} className="w-screen h-screen flex flex-col justify-center items-center">
       <div className="w-1/3 border-2 border-gray-500/80 p-8 rounded-lg shadow-lg flex flex-col gap-6">
+       {/* ユーザー名 */}
+        <div>
+          <Input
+            placeholder="ユーザー名"
+            className="border-2 h-12 border-gray-600/40"
+            {...register("name")}
+          />
+          {errors.name && (
+            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+          )}
+        </div>
+
         {/* メールアドレス */}
         <div>
           <Input
@@ -51,7 +70,6 @@ export default function Login(){
             <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
           )}
         </div>
-
         {/* パスワード */}
         <div>
           <Input
@@ -64,24 +82,38 @@ export default function Login(){
             <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
           )}
         </div>
+        {/* パスワード(再確認) */}
+        <div>
+          <Input
+            placeholder="パスワード（再確認)"
+            type="password"
+            className="border-2 h-12 border-gray-600/40"
+            {...register("password_confirmation")}
+          />
+          {errors.password_confirmation && (
+            <p className="text-xs text-red-500 mt-1">{errors.password_confirmation.message}</p>
+          )}
+        </div>
+
 
         {/* ログインボタン */}
         <div className="flex justify-center items-center">
           <Button
             type="submit"
             className="w-1/2 bg-hitonichi-secondary hover:bg-hitonichi-primary"
-            //disabled={loading}
-          >ログイン
+            disabled={isLoading}
+          >新規登録
           </Button>
         </div>
       </div>
 
       {/* 新規登録リンク */}
       <div className="flex justify-center items-center mt-5">
-        <a href="/register" className="text-hitonichi-secondary font-bold cursor-pointer hover:text-hitonichi-primary">
-          新規登録の方はこちら
+        <a href="/login" className="text-hitonichi-secondary font-bold cursor-pointer hover:text-hitonichi-primary" aria-disabled={isLoading}>
+          既にアカウントをお持ちの方はこちら
         </a>
       </div>
     </form>
     )
 }
+

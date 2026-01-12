@@ -1,6 +1,7 @@
 import { Routes as RouterRoutes, Route, /*Navigate*/ } from "react-router-dom";
 // import { useAuth } from "./contexts/AuthContext";
-import LoginPage from "./pages/LoginPage";
+import Login from "./pages/LoginPage";
+import Register from "./pages/Registerpage";
 
 // function PrivateRoute({ children }: { children: React.ReactNode }) {
 //   const { isAuthenticated } = useAuth();
@@ -12,7 +13,8 @@ import LoginPage from "./pages/LoginPage";
 export default function Routes() {
     return (
         <RouterRoutes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register"element={<Register />}/>
         </RouterRoutes>
     );
 }

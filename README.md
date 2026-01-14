@@ -79,7 +79,7 @@ Hitonichi/
 3. **Laravel のセットアップ**
 
    ```bash
-   # コンテナに入る
+   # バックエンドに移動
    cd backend
 
    # 依存関係のインストール
@@ -98,15 +98,18 @@ Hitonichi/
    php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
    php artisan migrate
 
-   # サーバーの起動
+   # APIサーバの起動
    php artisan serve
    ```
 
 4. **React のセットアップ**
 
    ```bash
+   # フロントエンドに移動
    cd frontend
+   # npm インストール
    npm install
+   # サーバの起動
    npm run dev
    ```
 

@@ -80,7 +80,7 @@ Hitonichi/
 
    ```bash
    # コンテナに入る
-   docker-compose exec backend bash
+   cd backend
 
    # 依存関係のインストール
    composer install
@@ -97,6 +97,9 @@ Hitonichi/
    # Sanctumのインストール
    php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
    php artisan migrate
+
+   # サーバーの起動
+   php artisan serve
    ```
 
 4. **React のセットアップ**
@@ -108,7 +111,7 @@ Hitonichi/
    ```
 
 5. **アクセス**
-   - Frontend: http://localhost:5173
+   - Frontend: http://localhost:5173/login
    - Backend API: http://localhost:8000
 
 ## API 仕様

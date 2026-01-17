@@ -16,10 +16,11 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 export default function Routes() {
     return (
         <RouterRoutes>
+            <Route path="/"element={<Navigate to="/daily" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/daily" element={<Dairy />} />
-            <Route path="/dairies" element={<Dairies />} />
+            <Route path="/daily" element={<PrivateRoute><Dairy /></PrivateRoute>} />
+            <Route path="/dairies" element={<PrivateRoute><Dairies /></PrivateRoute>} />
         </RouterRoutes>
-    );
+    );``
 }

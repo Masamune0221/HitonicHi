@@ -21,7 +21,7 @@ export default function Header() {
           {/* ロゴ */}
           <Link to="/daily" className="flex items-center space-x-2">
             <h1 className="text-2xl font-bold text-white tracking-wide">
-              ひåとにち
+              ひとにち
             </h1>
           </Link>
 

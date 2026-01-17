@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -5,39 +6,42 @@ import { type ErrorResponse } from "../types/error";
 import { loginSchema, type LoginFormData } from "@/zod/login"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { authApi } from "@/api/client"
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner"
 
 
 export default function Login() {
-
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
+  // すでにログインしている場合は日記ページへリダイレクト
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/daily', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   // フォーム送信時の処理
   const onSubmit = (data: LoginFormData) => {
-    try {
-      authApi.login(data.email, data.password)
-        .then(() => {
-          toast.success("ログイン成功:");
-          navigate('/daily')
-        })
-        .catch((error: ErrorResponse) => {
-          if (error.errors) {
-            const allErrors = Object.values(error.errors).flat();
-            allErrors.forEach((errMsg) => {
-              toast.error(errMsg);
-            })
-          } else {
-            toast.error(error.message || "登録失敗:");
-          }
-        });
-    } catch (error) {
-      toast.error("ログイン中にエラーが発生しました:" + error);
-    }
+    login(data.email, data.password)
+      .then(() => {
+        toast.success("ログイン成功");
+        navigate('/daily');
+      })
+      .catch((error: ErrorResponse) => {
+        if (error.errors) {
+          const allErrors = Object.values(error.errors).flat();
+          allErrors.forEach((errMsg) => {
+            toast.error(errMsg);
+          });
+        } else {
+          toast.error(error.message || "ログインに失敗しました");
+        }
+      });
   };
 
 

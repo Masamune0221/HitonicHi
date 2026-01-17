@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
-import {TrophySpin} from 'react-loading-indicators'
-import {createContext, useContext, useState,type ReactNode, useEffect} from 'react';
+import { TrophySpin } from 'react-loading-indicators'
+import { createContext, useContext, useState, type ReactNode, useEffect } from 'react';
 import { authApi } from '../api/client';
-
 interface AuthContextType {
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,33 +25,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             await authApi.getCurrentUser();
             setIsAuthenticated(true);
-        }catch{
+        } catch {
             setIsAuthenticated(false);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
     };
 
-    const login = async (email:string,password:string) =>{
-        try{
-            await authApi.login(email,password);
-            setIsAuthenticated(true);
-        }catch(error){
-            setIsAuthenticated(false);
-            throw error;
-        }
-    };
+    const login = async (email: string, password: string) => {
+        await authApi.login(email, password);
+        setIsAuthenticated(true);
+    }
 
-    if (isLoading){
-        return(
+    const logout = async () => {
+        try {
+            await authApi.logout();
+        } catch (error) {
+            console.error('ログアウトエラー:', error);
+        } finally {
+            setIsAuthenticated(false);
+        }
+    }
+
+    if (isLoading) {
+        return (
             <div className='w-screen h-screen flex justify-center items-center'>
-                <TrophySpin color='skyblue' size="large" text="読み込み中です。しばらくお待ちください。"/>
+                <TrophySpin color='skyblue' size="large" text="読み込み中です。しばらくお待ちください。" />
             </div>
         )
     };
 
-    return(
-        <AuthContext.Provider value={{isAuthenticated,login}}>
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

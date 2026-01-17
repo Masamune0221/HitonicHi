@@ -1,4 +1,5 @@
-import { useForm} from "react-hook-form"
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type ErrorResponse } from "../types/error";
 import { loginSchema, type LoginFormData } from "@/zod/login"
@@ -8,37 +9,40 @@ import { authApi } from "@/api/client"
 import { toast } from "sonner"
 
 
-export default function Login(){
+export default function Login() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
-    });
+  const navigate = useNavigate();
 
-    // フォーム送信時の処理
-    const onSubmit = (data: LoginFormData) => {
-      try {
-        authApi.login(data.email, data.password)
-          .then(() => {
-            toast.success("ログイン成功:");
-          })
-          .catch((error: ErrorResponse) => {
-            if (error.errors){
-              const allErrors = Object.values(error.errors).flat();
-              allErrors.forEach((errMsg) =>{
-                toast.error(errMsg);
-              })
-            }else{
-              toast.error(error.message ||"登録失敗:");
-            }
-          });
-      } catch (error) {
-        toast.error("ログイン中にエラーが発生しました:" + error);
-      }
-    };
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  // フォーム送信時の処理
+  const onSubmit = (data: LoginFormData) => {
+    try {
+      authApi.login(data.email, data.password)
+        .then(() => {
+          toast.success("ログイン成功:");
+          navigate('/daily')
+        })
+        .catch((error: ErrorResponse) => {
+          if (error.errors) {
+            const allErrors = Object.values(error.errors).flat();
+            allErrors.forEach((errMsg) => {
+              toast.error(errMsg);
+            })
+          } else {
+            toast.error(error.message || "登録失敗:");
+          }
+        });
+    } catch (error) {
+      toast.error("ログイン中にエラーが発生しました:" + error);
+    }
+  };
 
 
-    return(
-  <form onSubmit={handleSubmit(onSubmit)} className="w-screen h-screen flex flex-col justify-center items-center">
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="w-screen h-screen flex flex-col justify-center items-center">
       <div className="w-1/3 border-2 border-gray-500/80 p-8 rounded-lg shadow-lg flex flex-col gap-6">
         {/* メールアドレス */}
         <div>
@@ -70,7 +74,7 @@ export default function Login(){
           <Button
             type="submit"
             className="w-1/2 bg-hitonichi-secondary hover:bg-hitonichi-primary"
-            //disabled={loading}
+          //disabled={loading}
           >ログイン
           </Button>
         </div>
@@ -83,5 +87,5 @@ export default function Login(){
         </a>
       </div>
     </form>
-    )
+  )
 }

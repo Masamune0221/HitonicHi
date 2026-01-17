@@ -4,8 +4,7 @@ import Login from "./pages/LoginPage";
 import Register from "./pages/Registerpage";
 import Dairy from "./pages/DairyPage";
 import Dairies from "./pages/DairiesPage";
-
-
+import ErrorPage from "./pages/ErrorPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -16,6 +15,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 export default function Routes() {
     return (
         <RouterRoutes>
+            <Route path="*" element={<ErrorPage />} />
             <Route path="/"element={<Navigate to="/daily" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

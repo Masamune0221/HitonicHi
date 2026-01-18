@@ -6,8 +6,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:5173',
-        'http://localhost:3000',
+       'https://hitonichi-react.onrender.com',
     ],
 
     'allowed_origins_patterns' => [],

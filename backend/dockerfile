@@ -35,5 +35,10 @@ EXPOSE 80
 # 起動コマンド
 CMD service nginx start && php-fpm
 
+# start.sh 起動前設定
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+
 #start.sh起動
 CMD ["/start.sh"]

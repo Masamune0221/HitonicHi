@@ -1,12 +1,18 @@
-#!/usr/bin/env bash
-echo "Running composer"
-composer install --no-dev --working-dir=/var/www/html
+#!/bin/sh
+set -e
 
-echo "Caching config..."
-php artisan config:cache
+echo "🚀 Starting Laravel app..."
 
-echo "Caching routes..."
-php artisan route:cache
+# キャッシュクリア
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
-echo "Running migrations..."
-php artisan migrate --force
+# マイグレーション（失敗しても起動は続ける）
+php artisan migrate --force || echo "⚠️ Migration skipped"
+
+# php-fpm をバックグラウンドで起動
+php-fpm -D
+
+# nginx をフォアグラウンドで起動（←これが超重要）
+nginx -g "daemon off;"

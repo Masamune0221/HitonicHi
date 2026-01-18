@@ -35,5 +35,9 @@ EXPOSE 80
 # 起動コマンド
 CMD service nginx start && php-fpm
 
+# start.sh コピー
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # マイグレーション等開始
 CMD ["/start.sh"]

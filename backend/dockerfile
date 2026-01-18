@@ -1,20 +1,39 @@
-FROM richarvey/nginx-php-fpm:1.7.2
+ PHP + FPM
+FROM php:8.3-fpm
 
-COPY . .
+# 必要なパッケージ
+RUN apt-get update && apt-get install -y \
+    nginx \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# 作業ディレクトリ
+WORKDIR /var/www/html
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Laravel をコピー
+COPY backend/ /var/www/html/
 
+# Nginx 設定
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# 権限設定（超重要）
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
+# Composer install
+RUN composer install --no-dev --optimize-autoloader
+
+# ポート
+EXPOSE 80
+
+# 起動コマンド
+CMD service nginx start && php-fpm
+
+#start.sh起動
 CMD ["/start.sh"]

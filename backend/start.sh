@@ -3,14 +3,27 @@ set -e
 
 echo "🚀 Starting Laravel app..."
 
-# キャッシュ系（安全）
-php artisan config:clear
+# 権限確認（念のため）
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
+
+# キャッシュクリア
+php artisan config: clear
 php artisan route:clear
 php artisan view:clear
 
-# マイグレーション（productionでも止まらない）
+# 本番用キャッシュ生成
+php artisan config:cache
+php artisan route: cache
+php artisan view:cache
+
+# マイグレーション
 php artisan migrate --force || echo "⚠️ Migration skipped"
 
-# nginx & php-fpm 起動
+echo "✅ Laravel setup complete"
+echo "🌐 Starting PHP-FPM and Nginx..."
+
+# PHP-FPM をバックグラウンドで起動
 php-fpm -D
-nginx -g "daemon off;"
+
+# Nginx をフォアグラウンドで起動（これによりコンテナが終了しない）
+exec nginx -g "daemon off;"

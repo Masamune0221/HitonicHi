@@ -34,3 +34,6 @@ EXPOSE 80
 
 # 起動コマンド
 CMD service nginx start && php-fpm
+
+# マイグレーション等開始
+CMD ["/start.sh"]

@@ -3,13 +3,14 @@ set -e
 
 echo "🚀 Starting Laravel app..."
 
-# キャッシュクリア
+# キャッシュ系（安全）
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# マイグレーション（失敗しても起動は続ける）
+# マイグレーション（productionでも止まらない）
 php artisan migrate --force || echo "⚠️ Migration skipped"
 
-# 起動
-exec php artisan serve --host=0.0.0.0 --port=10000
+# nginx & php-fpm 起動
+php-fpm -D
+nginx -g "daemon off;"

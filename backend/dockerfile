@@ -1,38 +1,20 @@
-FROM php:8.3-cli
+FROM richarvey/nginx-php-fpm:1.7.2
 
-# 必要ライブラリ
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    libpq-dev \
-    && docker-php-ext-install \
-        pdo \
-        pdo_mysql \
-        pdo_pgsql \
-        zip
-
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# 作業ディレクトリ
-WORKDIR /var/www/html
-
-# アプリコピー
 COPY . .
 
-# Composer install
-RUN composer install --no-dev --optimize-autoloader
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-# 権限（Laravel必須）
-RUN chmod -R 775 storage bootstrap/cache
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-# start.sh をコピー
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Render が見るポート
-EXPOSE 10000
-
-# 起動（※ CMD は1つだけ）
 CMD ["/start.sh"]

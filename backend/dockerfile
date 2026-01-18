@@ -1,14 +1,16 @@
-# PHP + FPM
-FROM php:8.3-fpm
+FROM php:8.3-cli
 
-# 必要なパッケージ
+# 必要ライブラリ
 RUN apt-get update && apt-get install -y \
-    nginx \
     git \
     unzip \
-    libpq-dev \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip
+    libpq-dev \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        pdo_pgsql \
+        zip
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -16,28 +18,21 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # 作業ディレクトリ
 WORKDIR /var/www/html
 
-# Laravel をコピー
-COPY . /var/www/html/
-
-# Nginx 設定
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# 権限設定（超重要）
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
+# アプリコピー
+COPY . .
 
 # Composer install
 RUN composer install --no-dev --optimize-autoloader
 
-# ポート
-EXPOSE 80
+# 権限（Laravel必須）
+RUN chmod -R 775 storage bootstrap/cache
 
-# 起動コマンド
-CMD service nginx start && php-fpm
-
-# start.sh コピー
+# start.sh をコピー
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# マイグレーション等開始
+# Render が見るポート
+EXPOSE 10000
+
+# 起動（※ CMD は1つだけ）
 CMD ["/start.sh"]

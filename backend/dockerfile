@@ -29,6 +29,9 @@ RUN chown -R www-data:www-data /var/www/html \
 # Composer install
 RUN composer install --no-dev --optimize-autoloader
 
+# migrate
+RUN php artisan migrate
+
 # ポート
 EXPOSE 80
 

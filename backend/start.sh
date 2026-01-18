@@ -7,7 +7,7 @@ echo "🚀 Starting Laravel app..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
 # キャッシュクリア
-php artisan config: clear
+php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 

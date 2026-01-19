@@ -3,18 +3,6 @@ set -e
 
 echo "🚀 Starting Laravel app..."
 
-# . envが存在しない場合は作成
-if [ ! -f . env ]; then
-    echo "📝 Creating .env file from . env.example..."
-    cp .env.example . env
-fi
-
-# APP_KEYが空または未設定の場合は生成
-if !  grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
-    echo "🔑 Generating APP_KEY..."
-    php artisan key:generate --force --no-interaction
-fi
-
 # 権限確認（念のため）
 echo "🔐 Setting permissions..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true

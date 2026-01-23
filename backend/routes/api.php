@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\DairyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/csrf-token', function () {
+Route::middleware(['web'])->get('/csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
 });
 

@@ -17,19 +17,11 @@ const API_BASE_URL =
  */
 const getCsrfToken = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+    const response = await fetch(`${API_BASE_URL}/api/csrf-token`, {
       credentials: "include",
     });
-    if (!response.ok) {
-      throw new Error(`CSRF token fetch failed: ${response.status}`);
-    }
-    const cookies = document.cookie.split(";");
-    const xsrfCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith("XSRF-TOKEN=")
-    );
-    if (xsrfCookie) {
-      return decodeURIComponent(xsrfCookie.split("=")[1]);
-    }
+    const data = await response.json();
+    return data.token;  
   } catch (error) {
     console.error("CSRF token error:", error);
     throw error;

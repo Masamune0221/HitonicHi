@@ -98,7 +98,7 @@ export const authApi = {
     };
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/register",
@@ -134,7 +134,7 @@ export const dairyApi = {
     const csrfToken = await getCsrfToken();
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/dairy/today",
@@ -151,7 +151,7 @@ export const dairyApi = {
     const body: DairyRequest = { content };
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/dairy/create",
@@ -168,7 +168,7 @@ export const dairyApi = {
     const csrfToken = await getCsrfToken();
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/dairies",

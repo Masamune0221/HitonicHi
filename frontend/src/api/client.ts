@@ -70,7 +70,7 @@ export const authApi = {
     const csrfToken = await getCsrfToken();
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/login",

@@ -45,7 +45,10 @@ const getCsrfToken = async () => {
 async function apifetch(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const response = await fetch(url, options);
+  const response = await fetch(url, {
+    ...options,
+    credentials: "include",
+  });
 
   const contentType = response.headers.get("content-Type");
   const data = contentType?.includes("application/json")

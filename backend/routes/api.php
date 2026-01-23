@@ -5,6 +5,10 @@ use App\Http\Controllers\Api\DairyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -16,10 +20,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-
-Route::get('/csrf-token', function () {
-    return response()->json(['token' => csrf_token()]);
-});
 
 // ヘルスチェックエンドポイント
 Route::get('/health', function () {

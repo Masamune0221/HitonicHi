@@ -17,6 +17,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
 
 // ヘルスチェックエンドポイント
 Route::get('/health', function () {

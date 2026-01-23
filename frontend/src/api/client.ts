@@ -10,7 +10,7 @@ import { type DairyRequest } from "../types/dairy";
 import { type ErrorResponse } from "../types/error";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  import.meta.env.VITE_API_BASE_URL || "https://hitonichi.onrender.com";
 
 /**
  * CSRF トークンを取得

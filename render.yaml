@@ -34,9 +34,9 @@ services:
         value: .onrender.com
 
   # --- Frontend (React) ---
-  - type: static
+  - type: web
     name: hitonichi-react
-    runtime: node
+    runtime: static
     plan: free
     region: singapore
     buildCommand: cd frontend && npm install && npm run build

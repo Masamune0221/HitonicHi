@@ -1,15 +1,14 @@
 services:
   db:
-    container_name: HitonicHi_mysql
-    image: mysql:8.4
+    container_name: HitonicHi_postgresql
+    image: postgres:17
     environment:
-      MYSQL_DATABASE: Hitonichi
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: Hitonichi_user
-      MYSQL_PASSWORD: Hitonichi_pass
+      POSTGRES_DB: Hitonichi
+      POSTGRES_USER: Hitonichi_user
+      POSTGRES_PASSWORD: Hitonichi_pass
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql
     ports:
-      - "3306:3306"
+      - "5432:5432"
 volumes:
   db_data:

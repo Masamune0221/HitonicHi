@@ -10,7 +10,7 @@ import { type DairyRequest } from "../types/dairy";
 import { type ErrorResponse } from "../types/error";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://hitonichi.onrender.com";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
  * CSRF トークンを取得
@@ -115,7 +115,7 @@ export const authApi = {
     const csrfToken = await getCsrfToken();
     const headersWithCsrf: HeadersInit = {
       ...headers,
-      "X-XSRF-TOKEN": csrfToken || "",
+      "X-CSRF-TOKEN": csrfToken || "",
     };
     return apifetch(
       "/api/logout",

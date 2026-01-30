@@ -39,19 +39,14 @@ echo "📋 Environment check..."
 php artisan --version
 php -v
 
-echo "🌐 Starting PHP-FPM and Nginx..."
-
-# PHP-FPM をバックグラウンドで起動
+# 🌐 PHP-FPM と Nginx の起動
+echo "🌐 Starting PHP-FPM..."
 php-fpm -D
 
-# PHP-FPMが起動するまで待機
-sleep 2
-
-# Nginx の設定テスト
-nginx -t
-
-# Laravelのログをstdoutに出力（バックグラウンド）
-tail -f /var/www/html/storage/logs/laravel.log 2>/dev/null &
+echo "🌐 Starting Nginx..."
+# Laravel のログを標準出力に流す（Render のログで見れるようにする）
+touch /var/www/html/storage/logs/laravel.log
+tail -f /var/www/html/storage/logs/laravel.log &
 
 # Nginx をフォアグラウンドで起動
-exec nginx -g "daemon off;"
+nginx -t && exec nginx -g "daemon off;"

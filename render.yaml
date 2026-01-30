@@ -1,0 +1,61 @@
+services:
+  # --- Backend (Laravel) ---
+  - type: web
+    name: hitonichi-backend
+    runtime: docker
+    dockerContext: backend
+    dockerfilePath: backend/dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: hitonichi-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: APP_URL
+        fromContext: instanceUrl
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: hitonichi-react.onrender.com
+      - key: SESSION_DOMAIN
+        value: .onrender.com
+
+  # --- Frontend (React) ---
+  - type: static
+    name: hitonichi-react
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: cd frontend && npm install && npm run build
+    publishPath: frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromStack:
+          service: hitonichi-backend
+          property: url
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# --- Database (PostgreSQL) ---
+databases:
+  - name: hitonichi-db
+    plan: free
+    region: singapore
+    version: "17"
+    databaseName: hitonichi
+    user: hitonichi_user

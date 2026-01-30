@@ -40,7 +40,7 @@ services:
     plan: free
     region: singapore
     buildCommand: cd frontend && npm install && npm run build
-    publishPath: frontend/dist
+    staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_BASE_URL
         fromStack:
@@ -56,6 +56,5 @@ databases:
   - name: hitonichi-db
     plan: free
     region: singapore
-    version: "17"
     databaseName: hitonichi
     user: hitonichi_user

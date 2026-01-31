@@ -5,13 +5,8 @@ use App\Http\Controllers\Api\DairyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web'])->group(function () {
-    Route::get('/csrf-token', function () {
-        return response()->json(['token' => csrf_token()]);
-    });
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-});
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -22,13 +17,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dairy/today', [DairyController::class, 'today']);
     Route::get('/dairies', [DairyController::class, 'index']);
 });
-
-
-// ヘルスチェックエンドポイント
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'timestamp' => now()->toISOString(),
-    ]);
-});
-

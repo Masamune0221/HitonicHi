@@ -13,6 +13,17 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
+ * クッキー値を取得するヘルパー関数
+ */
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return decodeURIComponent(parts.pop()?.split(';').shift() || '');
+  }
+}
+
+/**
  * CSRF トークンを取得
  */
 const getCsrfToken = async () => {
@@ -20,8 +31,7 @@ const getCsrfToken = async () => {
     const response = await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
       credentials: "include",
     });
-    const data = await response.json();
-    return data.token;
+  return getCookie('XSRF-TOKEN');
   } catch (error) {
     console.error("CSRF token error:", error);
     throw error;

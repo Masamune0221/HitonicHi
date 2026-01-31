@@ -28,7 +28,7 @@ function getCookie(name: string) {
  */
 const getCsrfToken = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+    await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
       credentials: "include",
     });
   return getCookie('XSRF-TOKEN');

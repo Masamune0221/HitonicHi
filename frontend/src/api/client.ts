@@ -17,11 +17,11 @@ const API_BASE_URL =
  */
 const getCsrfToken = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/csrf-token`, {
+    const response = await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
       credentials: "include",
     });
     const data = await response.json();
-    return data.token;  
+    return data.token;
   } catch (error) {
     console.error("CSRF token error:", error);
     throw error;

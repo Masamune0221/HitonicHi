@@ -6,7 +6,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-       'https://hitonichi-react.onrender.com',
+        'https://hitonichi-frontend-react.web.app',
+        'https://hitonichi-frontend-react.firebaseapp.com',
     ],
 
     'allowed_origins_patterns' => [],

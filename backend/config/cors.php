@@ -1,14 +1,13 @@
 <?php
 
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://hitonichi-97c4a.web.app',
-        'https://hitonichi-97c4a.firebaseapp.com',
-    ],
+    // 'https://hitonichi-97c4a.web.app',
+    //  'https://hitonichi-97c4a.firebaseapp.com',
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
@@ -18,5 +17,5 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 ];

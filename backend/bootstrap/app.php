@@ -4,8 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Auth\AuthenticationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,12 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // APIリクエストの場合は、未認証時にリダイレクトせず必ずJSONを返すようにする
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
+        // APIリクエストの場合は、何があってもリダイレクトせず、必ずJSON形式でエラーを返すよう強制
+        // これにより「Route [login] not defined」エラーを防ぎ、正しいCORSヘッダーを保証する
+        $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
             if ($request->is('api/*')) {
-                return response()->json([
-                    'message' => 'Unauthenticated.'
-                ], 401);
+                return true;
             }
+
+            return $request->expectsJson();
         });
     })->create();

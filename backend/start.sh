@@ -10,14 +10,11 @@ php artisan route:clear
 php artisan view:clear
 php artisan cache:clear
 
-php artisan session:table || true 
-
 # マイグレーション
 echo "🗄️ Running migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️ Migration skipped (DB not configured)"
 
-
-
+php artisan session:table || true 
 
 echo "✅ Laravel setup complete"
 

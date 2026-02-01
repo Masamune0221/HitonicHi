@@ -18,7 +18,8 @@ return [
 
     'stateful' => explode(',', env(
         'SANCTUM_STATEFUL_DOMAINS',
-        'hitonichi-97c4a.web.app,hitonichi-97c4a.firebaseapp.com'
+        'hitonichi-97c4a.web.app,hitonichi-97c4a.firebaseapp.com',
+        'hitonichi-715553736851.us-central1.run.app'
     )),
 
     /*

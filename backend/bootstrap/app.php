@@ -22,13 +22,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->trustProxies(at: '*');
 
-        // 【究極の対策】全てのレスポンスヘッダーのCookieを強制的にSameSite=Noneに書き換える
+        // Cookie属性を強制上書きするミドルウェア
         $middleware->append(function (Request $request, $next) {
             $response = $next($request);
+            
+            // レスポンスが正しい型（ヘッダー操作可能）か確認
             if (method_exists($response, 'header')) {
-                foreach ($response->headers->getCookies() as $cookie) {
+                $cookies = $response->headers->getCookies();
+                foreach ($cookies as $cookie) {
                     $response->headers->setCookie(
-                        Cookie::create(
+                        new Cookie(
                             $cookie->getName(),
                             $cookie->getValue(),
                             $cookie->getExpiresTime(),
@@ -37,7 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
                             true, // secure
                             $cookie->isHttpOnly(),
                             $cookie->isRaw(),
-                            'none', // samesite を強制上書き
+                            'none', // samesite
                             $cookie->isPartitioned()
                         )
                     );

@@ -14,8 +14,6 @@ php artisan cache:clear
 echo "🗄️ Running migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️ Migration skipped (DB not configured)"
 
-php artisan session:table || true 
-
 echo "✅ Laravel setup complete"
 
 echo "📋 Environment check..."

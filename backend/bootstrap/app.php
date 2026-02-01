@@ -13,9 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // ステートフル認証（Session/Cookie）を有効化
         $middleware->statefulApi();
+
+        // XSRF-TOKENを暗号化から外す（これがエンコード問題の解決策！）
+        $middleware->encryptCookies(except: [
+            'XSRF-TOKEN',
+        ]);
+
+        // Cloud Runなどのプロキシ環境でのHTTPS認識を確実に
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
     })->create();

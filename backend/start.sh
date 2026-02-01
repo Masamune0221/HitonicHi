@@ -5,10 +5,10 @@ echo "🚀 Starting Laravel app..."
 
 # キャッシュクリア
 echo "🧹 Clearing caches..."
-php artisan config:clear --no-interaction || true
-php artisan route:clear --no-interaction || true
-php artisan view:clear --no-interaction || true
-php artisan cache:clear --no-interaction || true
+php artisan config:clear
+php artisan route:clear 
+php artisan view:clear
+php artisan cache:clear
 
 php artisan session:table || true 
 

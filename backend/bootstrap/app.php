@@ -13,10 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // ステートフル認証（Session/Cookie）を有効化
+        // Sanctumのステートフル認証（Cookie用）を有効化
         $middleware->statefulApi();
 
-        // XSRF-TOKENを暗号化から外す（これがエンコード問題の解決策！）
+        // XSRF-TOKENをJSから読み取り可能にするため、暗号化から除外
         $middleware->encryptCookies(except: [
             'XSRF-TOKEN',
         ]);
@@ -25,4 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // APIリクエストの場合はリダイレクトさせず常にJSONを返す（CORSエラー防止の鍵！）
+        $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
+            return $request->is('api/*');
+        });
     })->create();

@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\AuthenticationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,12 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Cloud Run（プロキシ）配下でHTTPSを正しく認識させる
         $middleware->trustProxies(at: '*');
-
-        // 未認証時に「login」ルートへリダイレクトするのを防ぎ、常にJSONを返すように設定
-        $middleware->redirectGuestsTo(function (Request $request) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // APIリクエストの場合は、未認証時にリダイレクトせず必ずJSONを返すようにする
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Unauthenticated.'
+                ], 401);
+            }
+        });
     })->create();

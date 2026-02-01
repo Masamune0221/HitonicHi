@@ -10,7 +10,7 @@ import { type DairyRequest } from "../types/dairy";
 import { type ErrorResponse } from "../types/error";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  import.meta.env.VITE_API_BASE_URL || "https://hitonichi-715553736851.us-central1.run.app";
 
 /**
  * クッキー値を取得するヘルパー関数
@@ -24,31 +24,42 @@ function getCookie(name: string) {
 }
 
 /**
- * CSRF トークンを取得
+ * CSRF トークンを取得 (Sanctum の初期化)
+ * 初回のリクエスト（ログイン前など）で一度だけ呼ぶのが理想的です
  */
 const getCsrfToken = async () => {
   try {
-    await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+    await fetch(`${API_BASE_URL}/api/csrf-cookie`, {
       credentials: "include",
     });
-  return getCookie('XSRF-TOKEN');
+    return getCookie('XSRF-TOKEN');
   } catch (error) {
-    console.error("CSRF token error:", error);
+    console.error("XSRF token error:", error);
     throw error;
   }
 };
 
 /**
  * apifetch
- * @param endpoint
- * @param options
- * @returns
+ * CSRF トークンの自動セット機能を備えたフェッチ関数
  */
 async function apifetch(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
+  
+  const method = options.method?.toUpperCase() || 'GET';
+  const apiHeaders = new Headers(options.headers || {});
+  
+  // POST/PUT/DELETE などのリクエストの場合、自動的に XSRF トークンをヘッダーにセットする
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+    const token = getCookie('XSRF-TOKEN');
+    if (token) {
+      apiHeaders.set('X-XSRF-TOKEN', token);
+    }
+  }
 
   const response = await fetch(url, {
     ...options,
+    headers: apiHeaders,
     credentials: "include",
   });
 
@@ -75,19 +86,16 @@ export const authApi = {
 
   // ログイン
   login: async (email: string, password: string): Promise<LoginResponse> => {
+    // ログイン前に CSRF セットアップが必要
+    await getCsrfToken();
+    
     const body: LoginRequest = { email, password };
-    // CSRFトークンを取得
-    const csrfToken = await getCsrfToken();
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/login",
       createApiConfig({
         method: "POST",
         body: JSON.stringify(body),
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },
@@ -99,39 +107,32 @@ export const authApi = {
     password: string,
     password_confirmation: string
   ): Promise<RegisterResponse> => {
-    const csrfToken = await getCsrfToken();
+    // 登録前に CSRF セットアップが必要
+    await getCsrfToken();
+
     const body: RegisterRequest = {
       name,
       email,
       password,
       password_confirmation,
     };
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/register",
       createApiConfig({
         method: "POST",
         body: JSON.stringify(body),
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },
 
   // ログアウト
   logout: async (): Promise<void> => {
-    const csrfToken = await getCsrfToken();
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/logout",
       createApiConfig({
         method: "POST",
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },
@@ -141,50 +142,35 @@ export const authApi = {
 export const dairyApi = {
   // 今日の日記を記載したか判定する
   today: async (): Promise<boolean> => {
-    const csrfToken = await getCsrfToken();
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/dairy/today",
       createApiConfig({
         method: "GET",
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },
 
   // 日記作成
   create: async (content: string): Promise<any> => {
-    const csrfToken = await getCsrfToken();
     const body: DairyRequest = { content };
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/dairy/create",
       createApiConfig({
         method: "POST",
         body: JSON.stringify(body),
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },
 
   // 日記一覧取得
   index: async (): Promise<any> => {
-    const csrfToken = await getCsrfToken();
-    const headersWithCsrf: HeadersInit = {
-      ...headers,
-      "X-CSRF-TOKEN": csrfToken || "",
-    };
     return apifetch(
       "/api/dairies",
       createApiConfig({
         method: "GET",
-        headers: headersWithCsrf,
+        headers: headers,
       })
     );
   },

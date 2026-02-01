@@ -21,7 +21,7 @@ export default function Register(){
     // フォーム送信時の処理
     const onSubmit = (data:RegisterFormData) => {
       try {
-        authApi.register(data.name, data.email, data.password, data.password_confirmation)
+        authApi.register(data.name, data.password, data.password_confirmation)
           .then(() => {
             toast.success("登録成功");
             setIsLoading(true);
@@ -56,18 +56,6 @@ export default function Register(){
           />
           {errors.name && (
             <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
-          )}
-        </div>
-
-        {/* メールアドレス */}
-        <div>
-          <Input
-            placeholder="メールアドレス"
-            className="border-2 h-12 border-gray-600/40"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
           )}
         </div>
         {/* パスワード */}

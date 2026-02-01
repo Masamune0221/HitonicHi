@@ -22,8 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => [
                 'required',
                 'string',
@@ -34,24 +33,18 @@ class RegisterRequest extends FormRequest
                 'regex:/[0-9]/',      // 数字を含む
                 'regex:/[!@#$%^&*(),.?":{}|<>-]/', // 記号を含む
             ],
-            //
         ];
-
     }
 
-    /**
-     * Get custom error messages for validator errors.
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
-            'email.unique' => 'このメールアドレスは既に使用されています。',
+            'name.required' => 'ユーザー名は必須です。',
+            'name.unique' => 'このユーザー名は既に使用されています。',
+            'password.required' => 'パスワードは必須です。',
+            'password.confirmed' => 'パスワードが一致しません。',
+            'password.min' => 'パスワードは8文字以上である必要があります。',
             'password.regex' => 'パスワードは大文字、小文字、数字、記号をそれぞれ1文字以上含める必要があります。',
-            'email.email' => 'メールアドレスの形式で登録する必要があります。',
-            'name.max.string' => 'ユーザ名は255文字以内です。',
-
         ];
     }
 }

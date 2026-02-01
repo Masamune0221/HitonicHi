@@ -9,8 +9,7 @@ import {
 import { type DairyRequest } from "../types/dairy";
 import { type ErrorResponse } from "../types/error";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://hitonichi-715553736851.us-central1.run.app";
+const API_BASE_URL = ""; // プロキシを使うため、空文字（相対パス）でOK。ローカル開発時は環境変数で切り替える。
 
 /**
  * クッキー値を取得するヘルパー関数
@@ -85,11 +84,11 @@ export const authApi = {
   getCurrentUser: () => apifetch("/api/user", createApiConfig()),
 
   // ログイン
-  login: async (email: string, password: string): Promise<LoginResponse> => {
+  login: async (name: string, password: string): Promise<LoginResponse> => {
     // ログイン前に CSRF セットアップが必要
     await getCsrfToken();
     
-    const body: LoginRequest = { email, password };
+    const body: LoginRequest = { name, password };
     return apifetch(
       "/api/login",
       createApiConfig({
@@ -103,7 +102,6 @@ export const authApi = {
   // 新規登録
   register: async (
     name: string,
-    email: string,
     password: string,
     password_confirmation: string
   ): Promise<RegisterResponse> => {
@@ -112,7 +110,6 @@ export const authApi = {
 
     const body: RegisterRequest = {
       name,
-      email,
       password,
       password_confirmation,
     };

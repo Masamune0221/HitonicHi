@@ -22,7 +22,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'name' => ['required', 'string'],
             'password' => ['required',
                 'string',
                 'min:8',
@@ -37,9 +37,8 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.email' => 'メールアドレスの形式で登録する必要があります。',
-            'name.max.string' => 'ユーザ名は255文字以内です。',
-
+            'name.required' => 'ユーザー名は必須です。',
+            'password.required' => 'パスワードは必須です。',
         ];
     }
 }

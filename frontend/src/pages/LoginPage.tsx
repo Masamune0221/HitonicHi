@@ -27,7 +27,7 @@ export default function Login() {
 
   // フォーム送信時の処理
   const onSubmit = (data: LoginFormData) => {
-    login(data.email, data.password)
+    login(data.name, data.password)
       .then(() => {
         toast.success("ログイン成功");
         navigate('/daily');
@@ -48,15 +48,15 @@ export default function Login() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-screen h-screen flex flex-col justify-center items-center">
       <div className="w-1/3 border-2 border-gray-500/80 p-8 rounded-lg shadow-lg flex flex-col gap-6">
-        {/* メールアドレス */}
+        {/* ユーザー名 */}
         <div>
           <Input
-            placeholder="メールアドレス"
+            placeholder="ユーザー名"
             className="border-2 h-12 border-gray-600/40"
-            {...register("email")}
+            {...register("name")}
           />
-          {errors.email && (
-            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+          {errors.name && (
+            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
           )}
         </div>
 

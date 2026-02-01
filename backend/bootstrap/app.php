@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Cookie;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,16 +14,38 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Sanctumのステートフル認証（Cookie用）を有効化
         $middleware->statefulApi();
 
-        // XSRF-TOKENをJSから読み取り可能にするため、暗号化から除外する
         $middleware->encryptCookies(except: [
             'XSRF-TOKEN',
         ]);
 
-        // Cloud Run（プロキシ）配下でHTTPSを正しく認識させる
         $middleware->trustProxies(at: '*');
+
+        // 【究極の対策】全てのレスポンスヘッダーのCookieを強制的にSameSite=Noneに書き換える
+        $middleware->append(function (Request $request, $next) {
+            $response = $next($request);
+            if (method_exists($response, 'header')) {
+                foreach ($response->headers->getCookies() as $cookie) {
+                    $response->headers->setCookie(
+                        Cookie::create(
+                            $cookie->getName(),
+                            $cookie->getValue(),
+                            $cookie->getExpiresTime(),
+                            $cookie->getPath(),
+                            $cookie->getDomain(),
+                            true, // secure
+                            $cookie->isHttpOnly(),
+                            $cookie->isRaw(),
+                            'none', // samesite を強制上書き
+                            $cookie->isPartitioned()
+                        )
+                    );
+                }
+            }
+            return $response;
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        //
     })->create();

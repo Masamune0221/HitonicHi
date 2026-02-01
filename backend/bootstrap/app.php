@@ -13,23 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // CORSを最優先で適用
-        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
-
         // Sanctumのステートフル認証（Cookie用）を有効化
         $middleware->statefulApi();
+
+        // XSRF-TOKENをJSから読み取り可能にするため、暗号化から除外する
+        $middleware->encryptCookies(except: [
+            'XSRF-TOKEN',
+        ]);
 
         // Cloud Run（プロキシ）配下でHTTPSを正しく認識させる
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // APIリクエストの場合は、何があってもリダイレクトせず、必ずJSON形式でエラーを返すよう強制
-        // これにより「Route [login] not defined」エラーを防ぎ、正しいCORSヘッダーを保証する
-        $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
-            if ($request->is('api/*')) {
-                return true;
-            }
-
-            return $request->expectsJson();
-        });
     })->create();

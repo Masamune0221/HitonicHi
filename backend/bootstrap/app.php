@@ -13,19 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // CORSを最優先で適用する
+        // CORSを最優先で適用
         $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
 
-        // Sanctumのステートフル認証（Cookie用）を有効にする
+        // Sanctumのステートフル認証（Cookie用）を有効化
         $middleware->statefulApi();
 
-        // Cloud Run（プロキシ）配下でHTTPSを正しく認識し、セキュアCookieを発行させるために必須
+        // Cloud Run（プロキシ）配下でHTTPSを正しく認識させる
         $middleware->trustProxies(at: '*');
 
-        // 未認証時にHTML（ログイン画面）に飛ばそうとするのを防ぎ、必ずJSON（401エラー等）を返すように強制する
-        $middleware->alias([
-            'json.request' => \Illuminate\Http\Middleware\HandleCors::class, // ダミー。実際には下で無名ミドルウェアを使う
-        ]);
+        // 未認証時に「login」ルートへリダイレクトするのを防ぎ、常にJSONを返すように設定
+        $middleware->redirectGuestsTo(function (Request $request) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

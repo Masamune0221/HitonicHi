@@ -3,30 +3,27 @@
 use Illuminate\Support\Str;
 
 return [
-    'driver' => env('SESSION_DRIVER', 'database'),
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
-    'encrypt' => env('SESSION_ENCRYPT', false),
+    'driver' => 'database', 
+    'lifetime' => 120,
+    'expire_on_close' => false,
+    'encrypt' => false,
     'files' => storage_path('framework/sessions'),
-    'connection' => env('SESSION_CONNECTION'),
-    'table' => env('SESSION_TABLE', 'sessions'),
-    'store' => env('SESSION_STORE'),
+    'connection' => null,
+    'table' => 'sessions',
+    'store' => null,
     'lottery' => [2, 100],
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug((string) env('APP_NAME', 'laravel')).'-session'
-    ),
-    'path' => env('SESSION_PATH', '/'),
+    'cookie' => 'hitonichi_session',
+    'path' => '/',
 
-    // ここを強制的に null にする（環境変数を無視）
+    // 絶対に null （環境変数を使わない）
     'domain' => null,
 
-    // ここを強制的に true にする（SameSite=None の必須条件）
+    // 絶対に true （HTTPS必須）
     'secure' => true,
 
-    'http_only' => env('SESSION_HTTP_ONLY', true),
+    'http_only' => true,
 
-    // ここを強制的に 'none' にする（環境変数を無視）
+    // 絶対に 'none' （クロスドメイン必須）
     'same_site' => 'none',
 
     'partitioned' => true,

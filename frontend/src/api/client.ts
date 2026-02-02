@@ -1,102 +1,77 @@
+import axios from "axios";
 import {
-  createApiConfig,
-  type LoginRequest,
   type LoginResponse,
-  type RegisterRequest,
   type RegisterResponse,
-  headers,
 } from "../types/auth";
-import { type DairyRequest } from "../types/dairy";
 import { type ErrorResponse } from "../types/error";
 
-const API_BASE_URL = ""; // プロキシを使うため、空文字（相対パス）でOK。ローカル開発時は環境変数で切り替える。
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
- * クッキー値を取得するヘルパー関数
+ * Axios インスタンスの設定
  */
-function getCookie(name: string) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    return decodeURIComponent(parts.pop()?.split(';').shift() || '');
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+  },
+});
+
+/**
+ * リクエストインターセプター
+ * localStorage からトークンを取得してヘッダーにセットする
+ */
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-}
+  return config;
+});
 
 /**
- * CSRF トークンを取得 (Sanctum の初期化)
- * 初回のリクエスト（ログイン前など）で一度だけ呼ぶのが理想的です
+ * レスポンスインターセプター
+ * エラーハンドリングと、401(認証切れ)時の処理
  */
-const getCsrfToken = async () => {
-  try {
-    await fetch(`${API_BASE_URL}/api/csrf-cookie`, {
-      credentials: "include",
-    });
-    return getCookie('XSRF-TOKEN');
-  } catch (error) {
-    console.error("XSRF token error:", error);
-    throw error;
-  }
-};
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // 401 の場合はトークンを削除してログイン画面へ（必要なら）
+      if (error.response.status === 401) {
+        localStorage.removeItem("auth_token");
+      }
 
-/**
- * apifetch
- * CSRF トークンの自動セット機能を備えたフェッチ関数
- */
-async function apifetch(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const method = options.method?.toUpperCase() || 'GET';
-  const apiHeaders = new Headers(options.headers || {});
-  
-  // POST/PUT/DELETE などのリクエストの場合、自動的に XSRF トークンをヘッダーにセットする
-  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
-    const token = getCookie('XSRF-TOKEN');
-    if (token) {
-      apiHeaders.set('X-XSRF-TOKEN', token);
+      const errorResponse: ErrorResponse = {
+        status: error.response.status,
+        message: error.response.data?.message || "エラーが発生しました",
+        errors: error.response.data?.errors || null,
+      };
+      return Promise.reject(errorResponse);
     }
+    return Promise.reject(error);
   }
-
-  const response = await fetch(url, {
-    ...options,
-    headers: apiHeaders,
-    credentials: "include",
-  });
-
-  const contentType = response.headers.get("content-Type");
-  const data = contentType?.includes("application/json")
-    ? await response.json()
-    : null;
-
-  if (!response.ok) {
-    const errorResponse: ErrorResponse = {
-      status: response.status,
-      message: data?.message || "エラーが発生しました",
-      errors: data?.errors || null,
-    };
-    throw errorResponse;
-  }
-  return data;
-}
+);
 
 // 認証関連のAPI
 export const authApi = {
   // 認証状態を取得
-  getCurrentUser: () => apifetch("/api/user", createApiConfig()),
+  getCurrentUser: async () => {
+    const response = await apiClient.get("/api/user");
+    return response.data;
+  },
 
   // ログイン
   login: async (name: string, password: string): Promise<LoginResponse> => {
-    // ログイン前に CSRF セットアップが必要
-    await getCsrfToken();
+    const response = await apiClient.post<LoginResponse>("/api/login", { name, password });
     
-    const body: LoginRequest = { name, password };
-    return apifetch(
-      "/api/login",
-      createApiConfig({
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: headers,
-      })
-    );
+    // トークンを保存
+    if (response.data.token) {
+      localStorage.setItem("auth_token", response.data.token);
+    }
+    
+    return response.data;
   },
 
   // 新規登録
@@ -105,33 +80,28 @@ export const authApi = {
     password: string,
     password_confirmation: string
   ): Promise<RegisterResponse> => {
-    // 登録前に CSRF セットアップが必要
-    await getCsrfToken();
-
-    const body: RegisterRequest = {
+    const response = await apiClient.post<RegisterResponse>("/api/register", {
       name,
       password,
       password_confirmation,
-    };
-    return apifetch(
-      "/api/register",
-      createApiConfig({
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: headers,
-      })
-    );
+    });
+
+    // トークンを保存
+    if (response.data.token) {
+      localStorage.setItem("auth_token", response.data.token);
+    }
+
+    return response.data;
   },
 
   // ログアウト
   logout: async (): Promise<void> => {
-    return apifetch(
-      "/api/logout",
-      createApiConfig({
-        method: "POST",
-        headers: headers,
-      })
-    );
+    try {
+      await apiClient.post("/api/logout");
+    } finally {
+      // 成功しても失敗してもトークンは消す
+      localStorage.removeItem("auth_token");
+    }
   },
 };
 
@@ -139,36 +109,19 @@ export const authApi = {
 export const dairyApi = {
   // 今日の日記を記載したか判定する
   today: async (): Promise<boolean> => {
-    return apifetch(
-      "/api/dairy/today",
-      createApiConfig({
-        method: "GET",
-        headers: headers,
-      })
-    );
+    const response = await apiClient.get("/api/dairy/today");
+    return response.data;
   },
 
   // 日記作成
   create: async (content: string): Promise<any> => {
-    const body: DairyRequest = { content };
-    return apifetch(
-      "/api/dairy/create",
-      createApiConfig({
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: headers,
-      })
-    );
+    const response = await apiClient.post("/api/dairy/create", { content });
+    return response.data;
   },
 
   // 日記一覧取得
   index: async (): Promise<any> => {
-    return apifetch(
-      "/api/dairies",
-      createApiConfig({
-        method: "GET",
-        headers: headers,
-      })
-    );
+    const response = await apiClient.get("/api/dairies");
+    return response.data;
   },
 };

@@ -15,6 +15,7 @@ export interface LoginResponse {
     name: string;
   };
   message?: string;
+  token?: string;
 }
 export interface RegisterRequest {
   name: string;
@@ -24,6 +25,7 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   status: number;
   message?: string;
+  token?: string;
 }
 
 // ユーザー情報の型

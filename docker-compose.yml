@@ -1,7 +1,7 @@
 services:
   db:
     container_name: HitonicHi_postgresql
-    image: postgres:17
+    image: postgres:18
     environment:
       POSTGRES_DB: Hitonichi
       POSTGRES_USER: Hitonichi_user

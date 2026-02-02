@@ -29,13 +29,14 @@ class AuthController extends Controller
                     'message' => 'ユーザー名またはパスワードが正しくありません。',
                 ], 401);
             }
-            // 認証に成功した場合の処理
-            $request->session()->regenerate();
+            // トークンを発行
+            $token = $request->user()->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'status' => 200,
                 'message' => 'ログインに成功しました。',
                 'user' => Auth::user(),
+                'token' => $token, // トークンを返す
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([
@@ -61,10 +62,14 @@ class AuthController extends Controller
                 ], 500);
             }
 
+            // トークンを発行
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'status' => 201,
                 'message' => '登録に成功しました.',
                 'user' => $user,
+                'token' => $token, // トークンを返す
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -81,9 +86,8 @@ class AuthController extends Controller
     public function logout()
     {
         try {
-            Auth::guard('web')->logout();
-            request()->session()->invalidate();
-            request()->session()->regenerateToken();
+            // 現在のトークンを削除
+            $request->user()->currentAccessToken()->delete();
 
             return response()->json([
                 'message' => 'ログアウトに成功しました。',

@@ -5,7 +5,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://hitonichi-97c4a.web.app','https://hitonichi-97c4a.firebaseapp.com'],
+    'allowed_origins' => [
+        'https://hitonichi-97c4a.web.app',
+        'https://hitonichi-97c4a.firebaseapp.com',
+        'http://localhost:5173',
+    ],
 
     'allowed_origins_patterns' => [],
 

@@ -4,11 +4,7 @@ use Laravel\Sanctum\Sanctum;
 
 return [
 
-    'stateful' => [
-        'hitonichi-97c4a.web.app',
-        'hitonichi-97c4a.firebaseapp.com',
-        'hitonichi-715553736851.us-central1.run.app',
-    ],
+    'stateful' => [],
 
     'guard' => ['web'],
 

@@ -13,14 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Sanctumのステートフル認証（Cookie用）を有効化
-        $middleware->statefulApi();
-
-        // XSRF-TOKENをJSから読み取り可能にするため、暗号化から除外
-        $middleware->encryptCookies(except: [
-            'XSRF-TOKEN',
-        ]);
-
         // Cloud Runなどのプロキシ環境でのHTTPS認識を確実に
         $middleware->trustProxies(at: '*');
     })

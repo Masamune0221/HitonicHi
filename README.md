@@ -1,65 +1,81 @@
+
+<p align="center">
+<img width="300" height="300" alt="hitonichi_icon" src="https://github.com/Masamune0221/HitonicHi/blob/dev/frontend/public/icon.png">
+</p>
+
 # ひとにち (Hitonichi)
 
-> 1 日の振り返りを感情ベースで記録できる日記アプリ
+> 1日の振り返りを感情ベースで記録できる日記アプリ
 
 ## コンセプト
 
 **ひとにち**は、メンタルケアを目的とした日記アプリです。
 
-- 1 日の振り返りを自由に記録
+- 1日の振り返りを自由に記録
 - よかったこと・悪かったことなど、感情ベースで書ける
-- **1 日 1 回・過去は編集不可**という思想
+- **1日1回・過去は編集不可**という思想
 - 必要に応じて他人と共有可能（強制ではない）
 
 ## 主な機能（MVP）
 
-- ✅ ログイン機能
-- ✅ 日付ごとに 1 日 1 件の日記投稿
-- ✅ テキスト入力（日記本文）
-- ✅ 過去の日記一覧表示
-- ✅ 今日の日記が投稿済みかどうかの判定
+- ✅ **ユーザー名によるログイン機能**
+- ✅ 1日1件の日記投稿（日付ベース）
+- ✅ テキスト投稿（Markdown非対応・プレーンテキスト）
+- ✅ 過去の日記一覧表示（フィルタリング対応）
+- ✅ 今日の日記ステータス確認（投稿済み/未投稿）
+- ✅ ユーザー登録・認証 (JWT/Sanctum Token)
 
 ### 制約ルール
 
-- **1 日 1 回しか保存できない**
-- **過去の日記は編集不可**
+1. **1日1回しか保存できない**（その日の感情を確定させる）
+2. **過去の日記は編集不可**（記録としての真正性を保つ）
 
 ## 技術スタック
 
 ### Backend
 
-- Laravel（API）
-- MySQL
-- Laravel Sanctum（認証）
+- **Framework**: Laravel 12.x
+- **Language**: PHP 8.2+
+- **Database**: PostgreSQL 18
+- **Auth**: Laravel Sanctum (Token Authentication)
+- **Environment**: Docker (Compose)
 
 ### Frontend
 
-- React + Vite
-- Tailwind CSS v4
-- React Router
+- **Framework**: React 19 + Vite 7
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4, Lucide React (Icons)
+- **Routing**: React Router 7
+- **State/Form**: React Hook Form + Zod
+- **UI Components**: Radix UI Primitives, Sonner (Toast)
 
-### 開発環境
+### インフラ・デプロイ
 
-- Docker & Docker Compose
+- **Backend API**: Google Cloud Run
+- **Frontend**: Firebase Hosting
+- **Database**: Google Cloud SQL (PostgreSQL)
 
 ## プロジェクト構造
 
 ```
 Hitonichi/
-├── backend/           # Laravel API
-├── frontend/          # React + Vite
-├── docker/            # Docker設定
-├── docs/              # ドキュメント
-└── docker-compose.yml
+├── backend/           # Laravel API (Root)
+│   ├── app/           # Application Logic
+│   ├── database/      # Migrations & Seeds
+│   └── tests/         # Feature/Unit Tests
+├── frontend/          # React App (Root)
+│   ├── src/           # Components, Pages, Hooks
+│   └── public/        # Static Assets
+├── docker-compose.yml # Local Development Environment
+└── README.md          # This file
 ```
 
-## セットアップ
+## セットアップ (ローカル開発)
 
-### 必要な環境
+### 必須要件
 
 - Docker & Docker Compose
-- Node.js 18+ (ローカル開発の場合)
-- Composer (ローカル開発の場合)
+- (Optional) Node.js 22+, PHP 8.2+, Composer
 
 ### 起動手順
 
@@ -76,50 +92,62 @@ Hitonichi/
    docker-compose up -d
    ```
 
-3. **Laravel のセットアップ**
+   _PostgreSQL 18 コンテナが起動します_
+
+3. **Backend (Laravel) セットアップ**
 
    ```bash
-   # バックエンドに移動
+   # コンテナ内に入る (推奨) またはローカルで実行
    cd backend
 
-   # 依存関係のインストール
+   # 依存関係インストール
    composer install
 
-   # .envファイルのコピー
+   # 環境設定
    cp .env.example .env
-
-   # アプリケーションキーの生成
    php artisan key:generate
 
-   # マイグレーション実行
+   # データベース準備
    php artisan migrate
 
-   # Sanctumのインストール
-   php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-   php artisan migrate
-
-   # APIサーバの起動
-   php artisan serve
+   # サーバー起動 (Dockerを使用しない場合)
+   # php artisan serve
    ```
 
-4. **React のセットアップ**
+4. **Frontend (React) セットアップ**
 
    ```bash
-   # フロントエンドに移動
    cd frontend
-   # npm インストール
+
+   # 依存関係インストール
    npm install
-   # サーバの起動
+
+   # 開発サーバー起動
    npm run dev
    ```
 
 5. **アクセス**
-   - Frontend: http://localhost:5173/login
-   - Backend API: http://localhost:8000
+   - Frontend: `http://localhost:5173`
+   - Backend API: `http://localhost:8000`
 
 ## API 仕様
 
-### 認証
+### 認証 (Authentication)
+
+#### `POST /api/register`
+
+ユーザー登録
+
+**リクエスト:**
+
+```json
+{
+  "name": "username01",
+  "email": "user@example.com",
+  "password": "password123!",
+  "password_confirmation": "password123!"
+}
+```
 
 #### `POST /api/login`
 
@@ -129,221 +157,70 @@ Hitonichi/
 
 ```json
 {
-  "email": "user@example.com",
-  "password": "password"
+  "name": "username01",
+  "password": "password123!"
 }
 ```
 
+_Note: メールアドレスではなくユーザー名でログインします。_
+
 #### `POST /api/logout`
 
-ログアウト（要認証）
+ログアウト（要認証: `Bearer <token>`）
 
----
-
-### 日記 API
+### 日記 (Diaries)
 
 #### `GET /api/diaries/today`
 
-今日の日記取得・投稿可否判定（要認証）
+今日の日記状態確認
 
-**レスポンス（未投稿）:**
+**レスポンス:**
 
 ```json
 {
-  "date": "2026-01-11",
+  "date": "2026-02-02",
   "can_post": true,
   "diary": null
 }
 ```
 
-**レスポンス（投稿済み）:**
-
-```json
-{
-  "date": "2026-01-11",
-  "can_post": false,
-  "diary": {
-    "id": 12,
-    "content": "今日は少し疲れた",
-    "ai_comment": null
-  }
-}
-```
-
----
-
 #### `POST /api/diaries`
 
-日記作成（1 日 1 回）（要認証）
+日記作成（1日1回制限）
 
 **リクエスト:**
 
 ```json
-{
-  "content": "今日は〇〇が大変だった"
-}
+{ "content": "今日はとても良い日だった。" }
 ```
-
-**レスポンス:**
-
-- `201 Created`: 作成成功
-- `409 Conflict`: すでに投稿済み
-
----
 
 #### `GET /api/diaries`
 
-日記一覧取得（要認証）
+日記一覧取得
 
-**クエリパラメータ（任意）:**
+**クエリパラメータ:**
 
-- `from`: 開始日（例: 2026-01-01）
-- `to`: 終了日（例: 2026-01-31）
+- `from`: `YYYY-MM-DD`
+- `to`: `YYYY-MM-DD`
 
-**レスポンス:**
+## デザインシステム
 
-```json
-[
-  {
-    "id": 10,
-    "date": "2026-01-09",
-    "excerpt": "少し落ち込んだ一日"
-  },
-  {
-    "id": 11,
-    "date": "2026-01-10",
-    "excerpt": "友達と話して楽になった"
-  }
-]
-```
+**コンセプトカラー**:  
+「夜明け前の静けさ」や「落ち着いた内省」をイメージしたブルーグレー基調。
 
----
+| Role           | Color      | Hex       |
+| -------------- | ---------- | --------- |
+| **Primary**    | Deep Navy  | `#27374D` |
+| **Secondary**  | Smoky Blue | `#526D82` |
+| **Accent**     | Blue Grey  | `#9DB2BF` |
+| **Background** | Pale Blue  | `#DDE6ED` |
 
-#### `GET /api/diaries/{id}`
+**フォント**: `Zen Kaku Gothic New` (Google Fonts)
 
-日記詳細取得（要認証）
+#### 今後の機能
 
-**レスポンス:**
-
-```json
-{
-  "id": 12,
-  "date": "2026-01-11",
-  "content": "今日は〇〇が大変だった",
-  "ai_comment": null,
-  "is_public": false
-}
-```
-
-## デザインガイドライン
-
-### カラーパレット
-
-| 役割                 | 色               | HEX       |
-| -------------------- | ---------------- | --------- |
-| メイン（文字・ロゴ） | 濃いネイビー     | `#27374D` |
-| サブ（補足・UI）     | スモーキーブルー | `#526D82` |
-| ボーダー・区切り     | 淡いブルーグレー | `#9DB2BF` |
-| 背景                 | ペールブルー     | `#DDE6ED` |
-
-### フォント
-
-**Zen Kaku Gothic New**
-
-- 基本ウェイト: 400
-- 見出し: 500
-- 強調（ロゴなど）: 700（多用しない）
-
-### UI 思想
-
-- 余計な情報を出さない
-- 入力体験を最優先
-- メンタルケア目的のため
-  - 色は落ち着いたトーン
-  - 否定的表現を避ける
-
-## データベース設計
-
-### users テーブル
-
-- id (PK)
-- name
-- email (unique)
-- password
-- timestamps
-
-### diaries テーブル
-
-- id (PK)
-- user_id (FK → users.id)
-- diary_date (date) **UNIQUE with user_id**
-- content (text)
-- is_public (boolean, default: false)
-- ai_comment (text, nullable)
-- timestamps
-
-**重要な制約:**
-
-```sql
-UNIQUE(user_id, diary_date) -- 1ユーザー1日1件を保証
-```
-
-## 開発コマンド
-
-### Backend (Laravel)
-
-```bash
-# マイグレーション
-php artisan migrate
-
-# マイグレーションのロールバック
-php artisan migrate:rollback
-
-# テスト実行
-php artisan test
-
-# キャッシュクリア
-php artisan cache:clear
-php artisan config:clear
-```
-
-### Frontend (React)
-
-```bash
-# 開発サーバー起動
-npm run dev
-
-# ビルド
-npm run build
-
-# プレビュー
-npm run preview
-
-# リント
-npm run lint
-```
-
-## 今後の拡張要素
-
-- [ ] Databricks AI との連携（日記への感想表示）
-- [ ] 日記の公開・非公開設定 UI
-- [ ] 他ユーザーの日記閲覧機能
-- [ ] モバイルアプリ化
+- [ ] 投稿をAIに共有し、AIに日記の感想を言ってもらう
 
 ## ライセンス
 
 MIT License
-
-## 貢献
-
-プルリクエストを歓迎します！
-
-1. このリポジトリをフォーク
-2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
-
----
-
-**作成日:** 2026 年 1 月 11 日

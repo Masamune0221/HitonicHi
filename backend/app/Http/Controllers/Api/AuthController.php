@@ -83,7 +83,7 @@ class AuthController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(\Illuminate\Http\Request $request)
     {
         try {
             // 現在のトークンを削除

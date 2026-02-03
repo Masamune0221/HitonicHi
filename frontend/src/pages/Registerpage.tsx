@@ -70,6 +70,7 @@ export default function Register(){
             <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
           )}
         </div>
+        <p className="text-xs -mt-4 text-gray-500">大文字・小文字・数字・記号を含む8文字以上</p>
         {/* パスワード(再確認) */}
         <div>
           <Input

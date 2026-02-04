@@ -46,7 +46,7 @@ export default function Register(){
 
     return(
   <form onSubmit={handleSubmit(onSubmit)} className="w-screen h-screen flex flex-col justify-center items-center">
-      <div className="w-1/3 border-2 border-gray-500/80 p-8 rounded-lg shadow-lg flex flex-col gap-6">
+      <div className="w-full max-w-xs border-2 border-gray-500/80 p-8 rounded-lg shadow-lg flex flex-col gap-6">
        {/* ユーザー名 */}
         <div>
           <Input

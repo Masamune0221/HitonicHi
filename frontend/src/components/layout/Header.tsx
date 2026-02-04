@@ -1,5 +1,9 @@
+
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { Brush } from '../animate-ui/icons/brush';
+import { MessageSquareQuote } from '../animate-ui/icons/message-square-quote';
+import { LogOut } from '../animate-ui/icons/log-out';
 
 export default function Header() {
   const { logout } = useAuth();
@@ -25,11 +29,11 @@ export default function Header() {
             </h1>
           </Link>
 
-          {/* ナビゲーション */}
-          <nav className="flex items-center space-x-6">
+          {/* PC用ナビゲーション */}
+          <nav className="hidden md:flex items-center space-x-6">
             <Link
               to="/daily"
-              className=" text-white/90 hover:text-white transition-colors duration-200 font-medium"
+              className="text-white/90 hover:text-white transition-colors duration-200 font-medium"
             >
               今日の日記
             </Link>
@@ -46,6 +50,31 @@ export default function Header() {
               ログアウト
             </button>
           </nav>
+
+          {/* スマホ用アイコンナビゲーション */}
+          <div className="flex md:hidden items-center space-x-4">
+            <Link
+              to="/daily"
+              className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-all"
+              title="今日の日記"
+            >
+              <Brush size={25} />
+            </Link>
+            <Link
+              to="/dairies"
+              className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-all"
+              title="過去の日記"
+            >
+              <MessageSquareQuote size={25} />
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-all"
+              title="ログアウト"
+            >
+              <LogOut size={25} />
+            </button>
+          </div>
         </div>
       </div>
     </header>

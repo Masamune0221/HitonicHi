@@ -89,6 +89,11 @@ export default function Dairies() {
                     <p className="text-white whitespace-pre-wrap leading-relaxed">
                       {dairy.content}
                     </p>
+                    <div className='w-full border-b border-white/30 my-4'/>
+                    <p className="text-xl font-medium text-white/70 mb-2">Hitonichiからの返信</p>
+                    <span className="text-md font-medium text-white/60">
+                      {dairy.ai_response ?? '-'}
+                    </span>
                   </div>
                 ))}
               </div>

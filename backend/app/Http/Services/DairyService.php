@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Dairy;
+use App\Models\AI_Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Http\Services\GeminiService;
@@ -52,6 +53,7 @@ class DairyService{
     public function getDairies($userId){
         try{
             $dairies = Dairy::where('user_id', $userId)
+                ->with('aiResponse')
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->groupBy(function($dairy) {
@@ -62,6 +64,7 @@ class DairyService{
                         return [
                             'id' => $dairy->id,
                             'content' => $dairy->content,
+                            'ai_response' => $dairy->aiResponse->content ?? null,
                             'date' => $dairy->created_at->format('Y-m-d'),
                             'created_at' => $dairy->created_at->toISOString(),
                         ];

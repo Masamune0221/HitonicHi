@@ -5,6 +5,7 @@ export interface DairyRequest {
 
 export interface DairyResponse {
     content: string;
+    ai_response: string;
     created_at: string;
     updated_at: string;
 }

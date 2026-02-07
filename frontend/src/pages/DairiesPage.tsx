@@ -74,7 +74,7 @@ export default function Dairies() {
                 {dairiesGrouped[activeTab]?.map((dairy) => (
                   <div
                     key={dairy.id}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all"
+                    className="bg-gray-500/30 backdrop-blur-sm rounded-xl p-6 border border-white/20  hover:bg-gray-500/30 transition-all"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <span className="text-sm font-medium text-white/60">

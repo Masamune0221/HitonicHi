@@ -84,10 +84,12 @@ export default function Login() {
         </div>
       </div>
 
-      {/* 新規登録リンク */}
-      <div className="flex justify-center items-center mt-5">
+      <div className="flex flex-col items-center mt-5 gap-2">
         <a href="/register" className="text-hitonichi-secondary font-bold cursor-pointer hover:text-hitonichi-primary">
           新規登録の方はこちら
+        </a>
+        <a href="/privacy" className="text-hitonichi-secondary text-xs hover:text-hitonichi-primary transition-colors">
+          プライバシーポリシー
         </a>
       </div>
     </form>

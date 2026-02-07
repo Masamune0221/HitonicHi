@@ -105,7 +105,17 @@ export default function Dairy() {
               placeholder="今日はどんな一日でしたか?&#10;&#10;あなたの気持ちを自由に書いてください..."
             />
             {errors.content && <p className="text-red-500">{errors.content.message}</p>}
-            <div className="flex justify-end">
+            
+            {/* AI利用に関する注釈 */}
+            <div className="p-3 bg-white/40 rounded-md border border-white/10">
+              <p className="text-[11px] text-gray/60 leading-relaxed">
+                ※ 入力された内容はAI（Google Gemini）によって解析され、返信が生成されます。
+                名前や住所などの個人情報の入力はお控えください。<br/>
+                また、AIは誤った情報を生成する可能性があります。
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-2">
               <button type="submit" className="px-8 py-3 bg-hitonichi-primary hover:bg-hitonichi-primary/80 text-white font-medium rounded-lg transition-all duration-200 backdrop-blur-sm shadow-lg hover:shadow-xl">
                 投稿する
               </button>

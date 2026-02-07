@@ -5,8 +5,14 @@ namespace App\Http\Services;
 use App\Models\Dairy;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Http\Services\GeminiService;
 
 class DairyService{
+    private $geminiService;
+    // GeminiServiceをコンストラクタで受け取る
+    public function __construct(GeminiService $geminiService){
+        $this->geminiService = $geminiService;
+    }
 
     /**
      * 今日の日記を取得する(Service)
@@ -23,12 +29,16 @@ class DairyService{
     /**
      * 日記を作成する(Service)
      * @param array $data
-     * @return Dairy
+     * @return array
      */
-    public function dairyCreate($data){
+    public function dairyCreate($data):array{
         try{
+            // 日記を作成
             $dairy = Dairy::create($data);
-            return $dairy;
+            // AIに返信を生成させる
+            $response = $this->geminiService->generateResponse($data['content'], $dairy->id);
+            // 日記とAIの返信を返す
+            return ['dairy' => $dairy, 'ai_response' => $response];
         }catch(Exception $e){
             throw $e;
         }

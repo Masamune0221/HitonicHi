@@ -6,6 +6,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {dairySchema, type DairyFormData} from '../zod/dairy';
 import { dairyApi } from '../api/client';
 import { toast } from 'sonner';
+import { TypeWriter } from '@/components/TypeWriter';
+
 
 export default function Dairy() {
   // 今日の日付を取得
@@ -18,16 +20,18 @@ export default function Dairy() {
   });
   const [todayStatus, setTodayStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors },reset } = useForm<DairyFormData>({
       resolver: zodResolver(dairySchema),
     });
   const onSubmit = (data: DairyFormData) => {
       dairyApi.create(data.content)
-      .then(() => {
+      .then((res) => {
         toast.success('日記の作成に成功しました')
         setTodayStatus(true)
         reset()
+        setAiResponse(res.ai_response)
       })
       .catch(err => {
         const errorMessage = err.status === 500 
@@ -109,6 +113,12 @@ export default function Dairy() {
           </div>
           </form>
         </ContentCard>
+        )}
+        {/* AIの返信エリア */}
+        {aiResponse && (
+          <ContentCard title="Hitonichiからの返信">
+            <TypeWriter text={aiResponse} />
+          </ContentCard>
         )}
       </div>
     </MainLayout>

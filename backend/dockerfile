@@ -1,5 +1,5 @@
 # PHP + FPM
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 
 # 必要なパッケージ
 RUN apt-get update && apt-get install -y \
@@ -31,7 +31,7 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # Composer install
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts 
 
 # Composer update
 RUN composer update

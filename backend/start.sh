@@ -5,6 +5,7 @@ echo "🚀 Starting Laravel app..."
 
 # キャッシュクリア
 echo "🧹 Clearing caches..."
+php artisan package:discover --ansi
 php artisan config:clear --no-interaction || true
 php artisan route:clear --no-interaction || true
 php artisan view:clear --no-interaction || true
@@ -28,3 +29,4 @@ php-fpm -D
 echo "🌐 Starting Nginx..."
 # Nginx をフォアグラウンドで起動
 nginx -t && exec nginx -g "daemon off;"
+

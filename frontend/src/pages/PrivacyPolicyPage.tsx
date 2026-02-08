@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
             <section>
               <h2 className="text-lg font-semibold text-white mb-3">3. データの管理と第三者提供</h2>
               <p>
-                法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供することはありません。<br/>日記データは暗号化された通信を通じて安全に管理されます。
+                ユーザーの同意なく個人情報を第三者に提供することはありません。<br/>日記データは暗号化された通信を通じて安全に管理されます。
               </p>
             </section>
             <section>

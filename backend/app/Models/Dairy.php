@@ -16,4 +16,9 @@ class Dairy extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function aiResponse()
+    {
+        return $this->hasOne(AI_Response::class);
+    }
 }

@@ -1,6 +1,7 @@
 import {type ReactNode } from 'react';
 import { BubbleBackground } from '../animate-ui/components/backgrounds/bubble';
 import Header from './Header';
+import Footer from './Footer';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           {children}
         </div>
       </main>
+      <Footer />
     </BubbleBackground>
   );
 }

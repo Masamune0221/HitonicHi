@@ -32,14 +32,13 @@ function BubbleBackground({
   interactive = false,
   transition = { stiffness: 100, damping: 20 },
   colors = {
-    first: "221,230,237",    // #dde6ed - 最も明るい背景色（柔らかい水色）
-    second: "157,178,191",   // #9db2bf - ボーダー色（優しいグレーブルー）
-    third: "82,109,130",     // #526d82 - セカンダリ色（落ち着いた青）
-    fourth: "39,55,77",      // #27374d - プライマリ色（深い青）
-    fifth: "190,205,215",    // 中間色1（#dde6edと#9db2bfの中間）
-    sixth: "120,142,155",    // 中間色2（#526d82と#9db2bfの中間）
-  },
-  ...props
+    first: "161,170,185",    
+    second: "167,188,191",   
+    third: "102,129,130",    
+    fourth: "19,105,117",      
+    fifth: "120,205,215",    
+    sixth: "120,142,155",    
+  },  ...props
 }: BubbleBackgroundProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);

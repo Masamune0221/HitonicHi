@@ -36,6 +36,10 @@ RUN chmod +x /start.sh
 # Composer install
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# 権限設定（インストール後に実行）
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
 # ポート
 EXPOSE 8080
 

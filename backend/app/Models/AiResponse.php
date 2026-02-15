@@ -11,6 +11,7 @@ class AI_Response extends Model
     protected $fillable = [
         'user_id',
         'dairy_id',
+        'ai_character_id',
         'content',
     ];
 
@@ -23,5 +24,10 @@ class AI_Response extends Model
     public function dairy()
     {
         return $this->belongsTo(Dairy::class);
+    }
+    // キャラクターIDとのリレーション
+    public function character()
+    {
+        return $this->belongsTo(AiCharacter::class, 'ai_character_id');
     }
 }

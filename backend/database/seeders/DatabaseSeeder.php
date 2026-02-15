@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\AiCharacter;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +15,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        AiCharacter::create([
+            'name' => 'ツンデレちゃん',
+            'tone' => 'ツンデレ口調で、素直じゃないけど、本当は優しい性格。',
+        ]);
+        AiCharacter::create([
+            'name' => '招きおっちゃん',
+            'tone' => 'おじさん語で、ちょっと言葉が悪いけど親しみやすい口調。',
         ]);
     }
 }

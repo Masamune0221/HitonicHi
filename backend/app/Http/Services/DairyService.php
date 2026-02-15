@@ -53,7 +53,7 @@ class DairyService{
     public function getDairies($userId){
         try{
             $dairies = Dairy::where('user_id', $userId)
-                ->with('aiResponse')
+                ->with('aiResponses.character')
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->groupBy(function($dairy) {
@@ -64,7 +64,13 @@ class DairyService{
                         return [
                             'id' => $dairy->id,
                             'content' => $dairy->content,
-                            'ai_response' => $dairy->aiResponse->content ?? null,
+                            'ai_responses' => $dairy->aiResponses->map(function($response) {
+                                return [
+                                    'content' => $response->content,
+                                    'character_name' => $response->character->name ?? 'Unknown',
+                                    'character_tone' => $response->character->tone ?? '',
+                                ];
+                            }),
                             'date' => $dairy->created_at->format('Y-m-d'),
                             'created_at' => $dairy->created_at->toISOString(),
                         ];

@@ -90,10 +90,20 @@ export default function Dairies() {
                       {dairy.content}
                     </p>
                     <div className='w-full border-b border-white/30 my-4'/>
-                    <p className="text-xl font-medium text-white/70 mb-2">Hitonichiからの返信</p>
-                    <span className="text-md font-medium text-white/60">
-                      {dairy.ai_response ?? '-'}
-                    </span>
+                    {dairy.ai_responses && dairy.ai_responses.length > 0 ? (
+                      dairy.ai_responses.map((response: any, index: number) => (
+                        <div key={index} className="mb-4 last:mb-0 bg-white/5 p-4 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="font-bold text-white/70 text-lg">{response.character_name}</span>
+                          </div>
+                          <p className="text-md text-white/80 leading-relaxed whitespace-pre-wrap">
+                            {response.content}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-md font-medium text-white/60">-</span>
+                    )}
                   </div>
                 ))}
               </div>

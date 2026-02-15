@@ -5,12 +5,23 @@ import { motion } from "motion/react";
 interface TypeWriterProps {
   text: string;
   speed?: number;
+  characterName: string;
 }
 
-export const TypeWriter = ({ text, speed = 35 }: TypeWriterProps) => {
+export const TypeWriter = ({ text, speed = 35, characterName }: TypeWriterProps) => {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
 
+  const setCharacter = () =>{
+    switch (characterName){
+      case "ツンデレちゃん":
+        return "Tsundere";
+      case "招きおっちゃん":
+        return "ManekiOchan";
+      case "":
+        return "";
+    }
+  }
   useEffect(() => {
     setDisplayedText("");
     setIsComplete(false);
@@ -32,8 +43,8 @@ export const TypeWriter = ({ text, speed = 35 }: TypeWriterProps) => {
   return (
     <>
       <img
-        src="public/characters/ManekiOchan.png"
-        alt="Tsundere"
+        src={`public/characters/${setCharacter()}.png`}
+        alt={characterName}
         className="w-50 h-50 rounded-full mx-auto"
       />
       <div className="font-mono leading-relaxed whitespace-pre-wrap text-white/80">

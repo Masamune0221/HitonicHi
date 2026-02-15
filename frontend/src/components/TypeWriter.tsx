@@ -1,50 +1,53 @@
-import {useState, useEffect} from "react";
-import {motion} from "motion/react";
+import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 // テキストを1文字ずつ表示するコンポーネント
 interface TypeWriterProps {
-    text: string;
-    speed?: number;
+  text: string;
+  speed?: number;
 }
 
-export const TypeWriter = ({text,speed=35}: TypeWriterProps) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const [isComplete,setIsComplete] = useState(false);
+export const TypeWriter = ({ text, speed = 35 }: TypeWriterProps) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
 
+  useEffect(() => {
+    setDisplayedText("");
+    setIsComplete(false);
 
-    useEffect(() => {
-        setDisplayedText('');
-        setIsComplete(false);
+    const characters = Array.from(text);
+    let currentIndex = 0;
+    const intervalId = setInterval(() => {
+      if (currentIndex < characters.length) {
+        setDisplayedText(characters.slice(0, currentIndex + 1).join(""));
+        currentIndex++;
+      } else {
+        clearInterval(intervalId);
+        setIsComplete(true);
+      }
+    }, speed);
+    return () => clearInterval(intervalId);
+  }, [text, speed]);
 
-
-        const characters = Array.from(text);
-        let currentIndex = 0;
-        const intervalId = setInterval(() => {
-            if (currentIndex < characters.length){
-                setDisplayedText(characters.slice(0,currentIndex+1).join(''));
-                currentIndex++;
-            }else{
-                clearInterval(intervalId);
-                setIsComplete(true);
-            }
-        
-        }, speed);
-    return() => clearInterval(intervalId);
-},[text,speed]);
-
-
-return (
-    <div className="font-mono leading-relaxed whitespace-pre-wrap text-white/80">
+  return (
+    <>
+      <img
+        src="public/characters/ManekiOchan.png"
+        alt="Tsundere"
+        className="w-50 h-50 rounded-full mx-auto"
+      />
+      <div className="font-mono leading-relaxed whitespace-pre-wrap text-white/80">
         {displayedText}
         {!isComplete && (
-            <motion.span
-                initial={{opacity:0}}    
-                animate={{opacity:[1,0.5,1]}}
-                transition={{duration:0.8, repeat:Infinity}}
-                className="inline-block w-2 h-[1.2em] bg-white/80 ml-1 align-middle"
-            >
-            </motion.span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [1, 0.5, 1] }}
+            transition={{ duration: 0.8, repeat: Infinity }}
+            className="inline-block w-2 h-[1.2em] bg-white/80 ml-1 align-middle"
+          ></motion.span>
         )}
-    </div>
-);
-}
+      </div>
+    </>
+  );
+};
+

@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Dairy;
-use App\Models\AI_Response;
+use App\Models\AiResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Http\Services\GeminiService;

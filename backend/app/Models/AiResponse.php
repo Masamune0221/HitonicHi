@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AI_Response extends Model
+class AiResponse extends Model
 {
     protected $table = "ai_response";
 

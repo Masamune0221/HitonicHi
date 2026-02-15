@@ -19,6 +19,6 @@ class Dairy extends Model
 
     public function aiResponses()
     {
-        return $this->hasMany(AI_Response::class);
+        return $this->hasMany(AiResponse::class);
     }
 }

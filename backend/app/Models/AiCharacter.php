@@ -17,6 +17,6 @@ class AiCharacter extends Model
 
     public function aiResponse()
     {
-        return $this->hasMany(aiResponse::class);
+        return $this->hasMany(AiResponse::class);
     }
 }

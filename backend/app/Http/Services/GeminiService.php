@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 
 // Model
-use App\Models\AI_Response;
+use App\Models\AiResponse;
 use App\Models\AiCharacter;
 // Log
 use Illuminate\Support\Facades\Log;
@@ -62,7 +62,7 @@ class GeminiService
             $result = $client->generativeModel($model)->generateContent($prompt);
             
             // 結果を保存
-            $response = AI_Response::create([
+            $response = AiResponse::create([
                 'user_id' => auth()->id(),
                 'dairy_id' => $dairy_id,
                 'ai_character_id' => $aiCharacter->id,

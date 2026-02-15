@@ -18,6 +18,10 @@ php artisan migrate --force --no-interaction || echo "⚠️ Migration skipped (
 
 echo "✅ Laravel setup complete"
 
+# Seeder実行
+echo "🌱 Running seeders..."
+php artisan db:seed --class=DatabaseSeeder --force --no-interaction || echo "⚠️ Seeder skipped (DB not configured)"
+
 echo "📋 Environment check..."
 php artisan --version
 php -v

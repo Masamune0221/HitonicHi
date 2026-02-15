@@ -38,7 +38,8 @@ class GeminiService
         $model = env('GEMINI_MODEL');
         // Geminiクライアントを初期化
         $client = Gemini::client($apikey);
-        
+        // 投稿したユーザー名を取得
+        $user = auth()->user();
         // キャラクターをランダムに取得
         $aiCharacter = AiCharacter::inRandomOrder()->first();
 
@@ -56,6 +57,7 @@ class GeminiService
             【重要】あなたは以下のキャラクターになりきって答えてください。
             キャラクター名: {$aiCharacter->name}
             話し方・口調: {$aiCharacter->tone}
+            ユーザーの名前: {$user->name}
             ユーザーの投稿内容: " . $content;
 
             // Gemini APIを呼び出し

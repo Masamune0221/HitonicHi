@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AI_Response extends Model
+class AiResponse extends Model
 {
     protected $table = "ai_response";
 
     protected $fillable = [
         'user_id',
         'dairy_id',
+        'ai_character_id',
         'content',
     ];
 
@@ -23,5 +24,10 @@ class AI_Response extends Model
     public function dairy()
     {
         return $this->belongsTo(Dairy::class);
+    }
+    // キャラクターIDとのリレーション
+    public function character()
+    {
+        return $this->belongsTo(AiCharacter::class, 'ai_character_id');
     }
 }

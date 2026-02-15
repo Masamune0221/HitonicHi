@@ -3,7 +3,8 @@
 namespace App\Http\Services;
 
 // Model
-use App\Models\AI_Response;
+use App\Models\AiResponse;
+use App\Models\AiCharacter;
 // Log
 use Illuminate\Support\Facades\Log;
 // Exception
@@ -12,8 +13,6 @@ use Exception;
 use Gemini\Enums\ModelVariation;
 use Gemini\GeminiHelper;
 use Gemini;
-
-
 
 class GeminiService
 {
@@ -24,8 +23,6 @@ class GeminiService
     文章は100〜200文字程度で、わかりやすくしてください。
     ポジティブな言葉を使いましょう。
     最後はまたいつでも投稿してくださいね。と締めくくってください。
-
-    ユーザーの投稿内容
     ";
 
     /**
@@ -34,28 +31,61 @@ class GeminiService
      * @param int $dairy_id
      * @return string
      */
-    public function generateResponse(string $content,int $dairy_id): string {
+    public function generateResponse(string $content,int $dairy_id): array {
         // apiキーを取得
         $apikey = env('GEMINI_API_KEY');
         // モデル名を取得
         $model = env('GEMINI_MODEL');
         // Geminiクライアントを初期化
         $client = Gemini::client($apikey);
+        // 投稿したユーザー名を取得
+        $user = auth()->user();
+        // キャラクターをランダムに取得
+        $aiCharacter = AiCharacter::inRandomOrder()->first();
+
+        // キャラクターがまだ登録されていない場合の対策（念のため）
+        if (!$aiCharacter) {
+             return [
+                'content' => "キャラクターが見つかりませんでした。",
+                'character_name' => 'System',
+                'character_tone' => 'Default',
+             ];
+        }
         try {
+            // プロンプトを作成（キャラの設定を埋め込む）
+            $prompt = self::PROMPT_TEMPLATE . "
+            【重要】あなたは以下のキャラクターになりきって答えてください。
+            キャラクター名: {$aiCharacter->name}
+            話し方・口調: {$aiCharacter->tone}
+            ユーザーの名前: {$user->name}
+            ユーザーの投稿内容: " . $content;
+
             // Gemini APIを呼び出し
-            $result = $client->generativeModel($model)->generateContent(self::PROMPT_TEMPLATE . $content);
+            $result = $client->generativeModel($model)->generateContent($prompt);
+            
             // 結果を保存
-            $response = AI_Response::create([
+            $response = AiResponse::create([
                 'user_id' => auth()->id(),
                 'dairy_id' => $dairy_id,
+                'ai_character_id' => $aiCharacter->id,
                 'content' => $result->text(),
             ]);
-            return $response->content;
+            
+            return [
+                'content' => $response->content,
+                'character_name' => $aiCharacter->name,
+                'character_tone' => $aiCharacter->tone,
+            ];
+
         } catch (Exception $e) {
             // エラーログを出力
             Log::error($e->getMessage());
             // エラーメッセージを返す
-            return "今日は私の調子が悪いみたいです・・・ でも、こうして気持ちを吐き出してくれてありがとうございます。またいつでも投稿してくださいね。";
+            return [
+                'content' => "今日は私の調子が悪いみたいです・・・ でも、こうして気持ちを吐き出してくれてありがとうございます。またいつでも投稿してくださいね。",
+                'character_name' => 'System',
+                'character_tone' => 'Default',
+            ];
         }
     }
 }

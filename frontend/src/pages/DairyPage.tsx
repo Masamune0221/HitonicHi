@@ -7,6 +7,7 @@ import {dairySchema, type DairyFormData} from '../zod/dairy';
 import { dairyApi } from '../api/client';
 import { toast } from 'sonner';
 import { TypeWriter } from '@/components/TypeWriter';
+import { type AiResponse } from '../types/dairy';
 
 
 export default function Dairy() {
@@ -20,7 +21,7 @@ export default function Dairy() {
   });
   const [todayStatus, setTodayStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiResponse, setAiResponse] = useState<AiResponse | null>(null);
 
     const { register, handleSubmit, formState: { errors },reset } = useForm<DairyFormData>({
       resolver: zodResolver(dairySchema),
@@ -126,8 +127,8 @@ export default function Dairy() {
         )}
         {/* AIの返信エリア */}
         {aiResponse && (
-          <ContentCard title="Hitonichiからの返信">
-            <TypeWriter text={aiResponse} />
+          <ContentCard title={`${aiResponse.character_name}からの返信`}>
+            <TypeWriter text={aiResponse.content} characterName={aiResponse.character_name} />
           </ContentCard>
         )}
       </div>

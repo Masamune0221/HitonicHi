@@ -14,7 +14,6 @@
 - 1日の振り返りを自由に記録
 - よかったこと・悪かったことなど、感情ベースで書ける
 - **1日1回・過去は編集不可**という思想
-- 必要に応じて他人と共有可能（強制ではない）
 
 ## 主な機能（MVP）
 
@@ -23,7 +22,6 @@
 - ✅ テキスト投稿（Markdown非対応・プレーンテキスト）
 - ✅ 過去の日記一覧表示（フィルタリング対応）
 - ✅ 今日の日記ステータス確認（投稿済み/未投稿）
-- ✅ ユーザー登録・認証 (JWT/Sanctum Token)
 
 ### 制約ルール
 
@@ -37,7 +35,6 @@
 - **Framework**: Laravel 12.x
 - **Language**: PHP 8.2+
 - **Database**: PostgreSQL 18
-- **Auth**: Laravel Sanctum (Token Authentication)
 - **Environment**: Docker (Compose)
 
 ### Frontend
@@ -53,7 +50,7 @@
 
 - **Backend API**: Google Cloud Run
 - **Frontend**: Firebase Hosting
-- **Database**: Google Cloud SQL (PostgreSQL)
+- **Database**: Google Cloud SQL (PostgreSQL) , Supabase
 
 ## プロジェクト構造
 
@@ -219,7 +216,7 @@ _Note: メールアドレスではなくユーザー名でログインします�
 
 #### 今後の機能
 
-- [ ] 投稿をAIに共有し、AIに日記の感想を言ってもらう
+- [x] 投稿をAIに共有し、AIに日記の感想を言ってもらう
 
 ## ライセンス
 
